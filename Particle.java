@@ -16,4 +16,8 @@ public class Particle extends PhysicsBoundObject{
         g2d.setColor(Color.blue);
         g2d.fillArc((int) (this.getPos().getX()-radius),(int) (this.getPos().getY()-radius),(int) (2*radius),(int) (2*radius),0,360);
     }
+    
+    public float getRadius(){
+    	return radius;
+    }
 }

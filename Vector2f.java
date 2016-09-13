@@ -38,11 +38,11 @@ public class Vector2f{
     }
     
     public float getMagnitude(){
-    	return (float) Math.sqrt(this.x*this.x + this.y*this.y);
+    	return (float) Math.sqrt((this.x*this.x) + (this.y*this.y));
     }
     
     public float getMagnitudeSquared(){
-    	return this.x*this.x + this.y*this.y;
+    	return (this.x*this.x) + (this.y*this.y);
     }
     
     public float getX(){
@@ -59,5 +59,10 @@ public class Vector2f{
     
     public void setY(float y){
         this.y = y;
+    }
+    
+    @Override
+    public String toString(){
+    	return "Vector2f[x:"+x+",y:"+y+"]";
     }
 }

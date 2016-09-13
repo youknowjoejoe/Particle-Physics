@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.awt.Dimension;
 import java.awt.Color;
@@ -22,17 +23,22 @@ public class GraphicsPanel extends JPanel implements Runnable{
     private double currentTime;
     private double accumulatedTime = 0;
     private Double timePassed = 0.0;
+    private double timeScale = 1f;
     
     private boolean running = true;
     
-    private List<Particle> particles;
+    private List<CollideableParticle> particles;
     
     public GraphicsPanel(){
         this.setPreferredSize(new Dimension(WIDTH,HEIGHT));
         
-        particles = new ArrayList<Particle>();
-        particles.add(new Particle(new Vector2f(120,160),new Vector2f(30,0),0.1f,10));
-        particles.add(new Particle(new Vector2f(320,360),new Vector2f(-30,0),0.1f,10));
+        particles = new ArrayList<CollideableParticle>();
+        
+        for(int x = 0; x < 22; x++){
+        	for(int y = 0; y < 16; y++){
+        		particles.add(new CollideableParticle(new Vector2f(50+x*20,50+y*20),new Vector2f(0,0),0.1f,3f));
+        	}
+        }
         Force gravity = new Force(){
             Vector2f force = new Vector2f(0,9.8f);
             
@@ -41,11 +47,17 @@ public class GraphicsPanel extends JPanel implements Runnable{
                 return force;
             }
         };
-        Force p1ToP2 = new AttractionForce(particles.get(0), particles.get(1), 10000000.0f, 2.0f);
-        Force p2ToP1 = new AttractionForce(particles.get(1), particles.get(0), 10000000.0f, 2.0f);
+        //Force p1ToP2 = new AttractionForce(particles.get(0), particles.get(1), 10000000.0f, 2.0f);
+        //Force p2ToP1 = new AttractionForce(particles.get(1), particles.get(0), 10000000.0f, 2.0f);
         //particles.get(0).getForces().add(gravity);
-        particles.get(0).getForces().add(p1ToP2);
-        particles.get(1).getForces().add(p2ToP1);
+        //particles.get(0).getForces().add(p1ToP2);
+        //particles.get(1).getForces().add(p2ToP1);
+        for(int rep = 0; rep < particles.size(); rep++){
+        	for(int rep2 = rep+1; rep2 < particles.size(); rep2++){
+        		particles.get(rep).getForces().add(new AttractionForce(particles.get(rep), particles.get(rep2), 1000000.0f, 2.0f));
+        		particles.get(rep2).getForces().add(new AttractionForce(particles.get(rep2), particles.get(rep), 1000000.0f, 2.0f));
+        	}
+        }
     }
     
     @Override
@@ -60,7 +72,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     
     public void cycle(){
     	currentTime = System.nanoTime()/1000000000.0;
-    	accumulatedTime += currentTime-oldTime;
+    	accumulatedTime += (currentTime-oldTime)*timeScale;
     	
     	while(accumulatedTime > dt){
     		this.logic();
@@ -73,8 +85,14 @@ public class GraphicsPanel extends JPanel implements Runnable{
     }
     
     public void logic(){
-    	for(Particle p: particles){
+    	for(int rep = 0; rep < particles.size(); rep++){
+    		CollideableParticle p = particles.get(rep);
     		p.applyForces(dt);
+    		if(rep < particles.size()-1){
+    			for(int rep2 = rep+1; rep2 < particles.size(); rep2++){
+    				p.solvePossibleCollisionWith(particles.get(rep2));
+    			}
+    		}
         	p.applyVelocity(dt);
     	}
     }
@@ -96,9 +114,9 @@ public class GraphicsPanel extends JPanel implements Runnable{
         JFrame window = new JFrame("Physics Derp1");
         GraphicsPanel pane = new GraphicsPanel();
         window.add(pane);
-        window.pack();
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.pack();
         window.setVisible(true);
         (new Thread(pane)).start();
     }

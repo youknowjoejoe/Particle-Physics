@@ -44,7 +44,11 @@ public class PhysicsBoundObject{
     }
     
     public void applyImpulse(Impulse i){
-        this.vel = this.vel.plus(i.calcImpulse());
+        this.vel = this.vel.plus(i.calcImpulse().scaledBy(inverseMass));
+    }
+    
+    public void setMomentum(Vector2f m){
+    	this.vel = m.scaledBy(inverseMass);
     }
     
     public void applyVelocity(float dt){
@@ -64,7 +68,7 @@ public class PhysicsBoundObject{
     	return this.inverseMass;
     }
     
-    public float getRadius(){
-    	return this.getRadius();
+    public Vector2f getMomentum(){
+    	return this.vel.scaledBy(1.0f/this.inverseMass);
     }
 }
