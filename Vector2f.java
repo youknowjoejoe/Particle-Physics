@@ -32,6 +32,10 @@ public class Vector2f{
         return (this.x*v.getX())+(this.y*v.getY());
     }
     
+    public float cross(Vector2f v){
+    	return this.getX()*v.getY() - this.getY()*v.getX(); 
+    }
+    
     public Vector2f normalized(){
     	float magnitude = (float) this.getMagnitude();
     	return new Vector2f(this.x/magnitude, this.y/magnitude);
