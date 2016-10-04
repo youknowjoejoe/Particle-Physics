@@ -10,6 +10,7 @@ public class CollideableParticle extends Particle {
 	}
 	
 	public void solvePossibleCollisionWith(CollideableParticle cp){
+		
 		Vector2f thisToCP = this.getPos().minus(cp.getPos());
 		float distanceSquared = thisToCP.getMagnitudeSquared();
 		
@@ -19,19 +20,36 @@ public class CollideableParticle extends Particle {
 			Vector2f dir = thisToCP.scaledBy(1.0f/distance);
 			Vector2f mtv = dir.scaledBy(overlap);
 			
+			Vector2f time = mtv.dividedBy(this.getAvgVelocity().minus(cp.getAvgVelocity()));
+			float t = Math.min(time.getX(), time.getY());
+			if(!Float.isFinite(t)){
+				t = time.getX();
+				if(!Float.isFinite(t)){
+					t = time.getY();
+				}
+			}
+			t = Math.max(t,-GraphicsPanel.dt);
 			
+			this.traceBack(t);
+			cp.traceBack(t);
 			
-			this.applyDisplacement(mtv.scaledBy(0.6f));
-			cp.applyDisplacement(mtv.scaledBy(-0.6f));
+			Vector2f impulse = dir.scaledBy((this.getVelocity().minus(cp.getVelocity()).dot(dir)*(1+Math.min(this.getE(),cp.getE())))/(this.getInverseMass()+cp.getInverseMass()));
+			System.out.println(impulse.getMagnitude());
 			
-			Vector2f impulse = dir.scaledBy(cp.getMomentum().minus(this.getMomentum()).dot(dir)*(1.0f+Math.min(this.getE(),cp.getE())));
-			//Vector2f impulse = cp.getMomentum().minus(this.getMomentum()).scaledBy(0.5f);
-			//Vector2f impulse = new Vector2f(0,0);
+			this.applyImpulse(impulse.scaledBy(-1.0f));
+			cp.applyImpulse(impulse);
 			
-			this.applyImpulse(impulse);
-			cp.applyImpulse(impulse.scaledBy(-1.0f));
+			/*float percent = 1.0f;
+			float slop = 0.01f;
+			Vector2f displacement = mtv.scaledBy(Math.max(overlap-slop,0.0f)/((this.getInverseMass()+cp.getInverseMass()))*percent);
 			
-			System.out.println(this.getPos().minus(cp.getPos()).getMagnitudeSquared() < (this.radius + cp.getRadius())*(this.radius + cp.getRadius()));
+			this.applyDisplacement(displacement.scaledBy(this.getInverseMass()));
+			cp.applyDisplacement(displacement.scaledBy(-1.0f*cp.getInverseMass()));*/
+			
+			this.applyVelocity(-t);
+			cp.applyVelocity(-t);
+			
+			//System.out.println(this.getPos().minus(cp.getPos()).getMagnitudeSquared() < (this.radius + cp.getRadius())*(this.radius + cp.getRadius()));
 		}
 	}
 

@@ -60,6 +60,14 @@ public class PhysicsBoundObject{
         this.oldVel = this.vel;
     }
     
+    public void traceBack(float dt){
+    	this.pos = this.pos.plus(this.vel.plus(this.oldVel).scaledBy(dt/2.0f));
+    }
+    
+    public Vector2f getAvgVelocity(){
+    	return this.vel.plus(this.oldVel).scaledBy(0.5f);
+    }
+    
     public void applyDisplacement(Vector2f d){
     	this.pos = this.pos.plus(d);
     }
@@ -74,5 +82,9 @@ public class PhysicsBoundObject{
     
     public Vector2f getMomentum(){
     	return this.vel.scaledBy(1.0f/this.inverseMass);
+    }
+    
+    public Vector2f getVelocity(){
+    	return this.vel;
     }
 }

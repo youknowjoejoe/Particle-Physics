@@ -19,12 +19,12 @@ public class GraphicsPanel extends JPanel implements Runnable{
     private final int HEIGHT = 480;
     
     private Color clearScreen = new Color(255,255,255);
-    private float dt = 1.0f/180.0f;
+    public static float dt = 1.0f/180.0f;
     private double oldTime;
     private double currentTime;
     private double accumulatedTime = 0;
     private Double timePassed = 0.0;
-    private double timeScale = 2f;
+    private double timeScale = 0.1f;
     
     private boolean running = true;
     
@@ -35,14 +35,14 @@ public class GraphicsPanel extends JPanel implements Runnable{
         
         particles = new ArrayList<CollideableParticle>();
         
-        /*for(int x = 0; x < 22; x++){
-        	for(int y = 0; y < 16; y++){
-        		particles.add(new CollideableParticle(new Vector2f(50+x*20,50+y*20),new Vector2f(0,0),0.1f,5f));
+        for(int x = 0; x < 22; x++){
+        	for(int y = 0; y < 11; y++){
+        		particles.add(new CollideableParticle(new Vector2f(50+x*20,50+y*20),new Vector2f(0,0),0.1f,5f,0.9f));
         	}
-        }*/
+        }
         
-        particles.add(new CollideableParticle(new Vector2f(325,150),new Vector2f(0,0),0.1f,50f,0.0f));
-        particles.add(new CollideableParticle(new Vector2f(300,300),new Vector2f(0,-10),0.01f,5f,0.0f));
+        //particles.add(new CollideableParticle(new Vector2f(325,150),new Vector2f(0,0),0.1f,10f,1.0f));
+        //particles.add(new CollideableParticle(new Vector2f(320,300),new Vector2f(0,-100),0.1f,10f,1.0f));
         particles.get(1).setColor(Color.red);
         Force gravity = new Force(){
             Vector2f force = new Vector2f(0,9.8f);
@@ -57,13 +57,13 @@ public class GraphicsPanel extends JPanel implements Runnable{
         //particles.get(0).getForces().add(gravity);
         //particles.get(0).getForces().add(p1ToP2);
         //particles.get(1).getForces().add(p2ToP1);
-        /*for(int rep = 0; rep < particles.size(); rep++){
+        for(int rep = 0; rep < particles.size(); rep++){
         	for(int rep2 = 0; rep2 < particles.size(); rep2++){
         		if(rep != rep2){
         			particles.get(rep).getForces().add(new AttractionForce(particles.get(rep), particles.get(rep2), 1000000.0f, 2.0f));
         		}
         	}
-        }*/
+        }
     }
     
     @Override
@@ -101,8 +101,6 @@ public class GraphicsPanel extends JPanel implements Runnable{
     		}
         	p.applyVelocity(dt);
     	}
-    	
-    	System.out.println(particles.get(0).getMomentum().plus(particles.get(1).getMomentum()).getMagnitude());
     }
     
     @Override
