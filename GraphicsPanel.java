@@ -19,8 +19,8 @@ import java.awt.Composite;
 @SuppressWarnings("serial")
 public class GraphicsPanel extends JPanel implements Runnable{
     
-    private final int WIDTH = 1600;
-    private final int HEIGHT = 900;
+    private final int WIDTH = 1024;
+    private final int HEIGHT = 768;
     
     private Color clearScreen = new Color(0,0,0);
     private Color transparency = new Color(0,0,0,0);
@@ -38,7 +38,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     
     private List<CollideableParticle> particles;
     
-    public GraphicsPanel(float dt, float timeScale, float fadeFactor, float coefOfRestitution){
+    public GraphicsPanel(float dt, float timeScale, float fadeFactor, float coefOfRestitution, float attractionForce){
     	this.dt = dt;
     	this.timeScale = timeScale;
     	this.fadeFactor = fadeFactor;
@@ -47,7 +47,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
         
         particles = new ArrayList<CollideableParticle>();
         
-        for(int x = 0; x < 22; x++){
+        for(int x = 0; x < 11; x++){
         	for(int y = 0; y < 11; y++){
         		double ran = Math.random();
         		float mass = ((int)Math.ceil((10*ran)))*10;
@@ -57,9 +57,9 @@ public class GraphicsPanel extends JPanel implements Runnable{
         	}
         }
         
-        for(int x = 0; x < 22; x++){
+        for(int x = 11; x < 22; x++){
         	for(int y = 0; y < 11; y++){
-        		particles.add(new CollideableParticle(new Vector2f(1000+x*(WIDTH/50),600+y*(HEIGHT/40)),new Vector2f(0,0),0.01f,5f,coefOfRestitution));
+        		particles.add(new CollideableParticle(new Vector2f(500+x*(WIDTH/50),500+y*(HEIGHT/40)),new Vector2f(0,0),0.01f,5f,coefOfRestitution));
         	}
         }
         
@@ -75,7 +75,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
         for(int rep = 0; rep < particles.size(); rep++){
         	for(int rep2 = 0; rep2 < particles.size(); rep2++){
         		if(rep != rep2){
-        			particles.get(rep).getForces().add(new AttractionForce(particles.get(rep), particles.get(rep2), 10.0f, 2.0f));
+        			particles.get(rep).getForces().add(new AttractionForce(particles.get(rep), particles.get(rep2), attractionForce, 2.0f));
         		}
         	}
         }
@@ -188,7 +188,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     
     public static void main(String[] args){
         JFrame window = new JFrame("Particle Physics");
-        GraphicsPanel pane = new GraphicsPanel(1.0f/180.0f,1.0f,0.9f,0.9f);
+        GraphicsPanel pane = new GraphicsPanel(1.0f/720.0f,0.5f,0.98f,1.0f,1000.0f);
         window.add(pane);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
