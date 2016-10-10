@@ -7,10 +7,11 @@ public class Particle extends PhysicsBoundObject{
     float radius;
     private Color c = Color.blue;
     
-    public Particle(Vector2f pos, Vector2f vel, float mass, float radius){
-        super(pos, vel, mass);
+    public Particle(Vector2f pos, Vector2f vel, float inverseMass, float radius){
+        super(pos, vel, inverseMass);
         
         this.radius = radius;
+        this.c = new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
     }
     
     public void draw(Graphics2D g2d){

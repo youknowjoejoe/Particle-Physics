@@ -4,8 +4,8 @@ public class CollideableParticle extends Particle {
 	
 	private float e;
 	
-	public CollideableParticle(Vector2f pos, Vector2f vel, float mass, float radius, float restitution) {
-		super(pos, vel, mass, radius);
+	public CollideableParticle(Vector2f pos, Vector2f vel, float inverseMass, float radius, float restitution) {
+		super(pos, vel, inverseMass, radius);
 		this.e = restitution;
 	}
 	
@@ -28,13 +28,16 @@ public class CollideableParticle extends Particle {
 					t = time.getY();
 				}
 			}
-			t = Math.max(t,-GraphicsPanel.dt);
 			
-			this.traceBack(t);
-			cp.traceBack(t);
+			//boolean useTraceBack = (time.getX() < mtv.getX()*2 && time.getY() < mtv.getY()*2) && t < GraphicsPanel.dt;
+			
+			//if(useTraceBack){
+			//	this.traceBack(t);
+			//	cp.traceBack(t);
+			//}
 			
 			Vector2f impulse = dir.scaledBy((this.getVelocity().minus(cp.getVelocity()).dot(dir)*(1+Math.min(this.getE(),cp.getE())))/(this.getInverseMass()+cp.getInverseMass()));
-			System.out.println(impulse.getMagnitude());
+			//System.out.println(impulse.getMagnitude());
 			
 			this.applyImpulse(impulse.scaledBy(-1.0f));
 			cp.applyImpulse(impulse);
@@ -46,8 +49,14 @@ public class CollideableParticle extends Particle {
 			this.applyDisplacement(displacement.scaledBy(this.getInverseMass()));
 			cp.applyDisplacement(displacement.scaledBy(-1.0f*cp.getInverseMass()));*/
 			
-			this.applyVelocity(-t);
-			cp.applyVelocity(-t);
+			/*if(useTraceBack){
+				this.applyVelocity(-t);
+				cp.applyVelocity(-t);
+			} else {*/
+			Vector2f displacement = mtv.scaledBy(1f/(this.getInverseMass()+cp.getInverseMass()));
+			this.applyDisplacement(displacement.scaledBy(this.getInverseMass()));
+			cp.applyDisplacement(displacement.scaledBy(-cp.getInverseMass()));
+			//}
 			
 			//System.out.println(this.getPos().minus(cp.getPos()).getMagnitudeSquared() < (this.radius + cp.getRadius())*(this.radius + cp.getRadius()));
 		}

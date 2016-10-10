@@ -9,11 +9,11 @@ public class PhysicsBoundObject{
     private List<Force> forces;
     private List<Force> forcesToRemove;
     
-    public PhysicsBoundObject(Vector2f pos, Vector2f vel,float mass){
+    public PhysicsBoundObject(Vector2f pos, Vector2f vel,float inverseMass){
         this.pos = pos;
         this.vel = vel;
         this.oldVel = vel;
-        this.inverseMass = 1.0f/mass;
+        this.inverseMass = inverseMass;
         
         this.forces = new ArrayList<Force>();
         this.forcesToRemove = new ArrayList<Force>();
