@@ -20,14 +20,14 @@ public class CollideableParticle extends Particle {
 			Vector2f dir = thisToCP.scaledBy(1.0f/distance);
 			Vector2f mtv = dir.scaledBy(overlap);
 			
-			Vector2f time = mtv.dividedBy(this.getAvgVelocity().minus(cp.getAvgVelocity()));
+			/*Vector2f time = mtv.dividedBy(this.getAvgVelocity().minus(cp.getAvgVelocity()));
 			float t = Math.min(time.getX(), time.getY());
 			if(!Float.isFinite(t)){
 				t = time.getX();
 				if(!Float.isFinite(t)){
 					t = time.getY();
 				}
-			}
+			}*/
 			
 			//boolean useTraceBack = (time.getX() < mtv.getX()*2 && time.getY() < mtv.getY()*2) && t < GraphicsPanel.dt;
 			
