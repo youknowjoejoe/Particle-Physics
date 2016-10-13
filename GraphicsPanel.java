@@ -40,7 +40,8 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
     private boolean running = true;
     
     private Vector2f mousePos = new Vector2f(0,0);
-    private boolean mouseDown = false;
+    private boolean leftMouseDown = false;
+    private boolean rightMouseDown = false;
     private List<MouseInfoReceiver> mReceivers;
     
     private List<CollideableParticle> particles;
@@ -64,8 +65,9 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
         	for(int y = 0; y < 11; y++){
         		double ran = Math.random();
         		float mass = ((int)Math.ceil((10*ran)))*10;
-        		System.out.println(1f/mass + " " + mass/10f);
         		float radius = mass/10f;
+        		//float mass = 100f;
+        		//float radius = 5f;
         		particles.add(new CollideableParticle(new Vector2f(50+x*(WIDTH/50),50+y*(HEIGHT/40)),new Vector2f(0,0),1f/mass,radius,coefOfRestitution));
         	}
         }
@@ -89,7 +91,7 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
         	for(int rep2 = 0; rep2 < particles.size(); rep2++){
         		if(rep != rep2){
         			particles.get(rep).getForces().add(new AttractionForce(particles.get(rep), particles.get(rep2), attractionForce, 2.0f));
-        			MouseAttractionForce m = new MouseAttractionForce(particles.get(rep), 1000f, attractionForce, 2f,10f);
+        			MouseAttractionForce m = new MouseAttractionForce(particles.get(rep), 100f, attractionForce, 2f,10f);
         			mReceivers.add(m);
         			particles.get(rep).getForces().add(m);
         		}
@@ -126,7 +128,7 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
     
     public void updateInput(){
     	for(MouseInfoReceiver mr: mReceivers){
-    		mr.giveMouseInfo(mousePos, mouseDown);
+    		mr.giveMouseInfo(mousePos, leftMouseDown, rightMouseDown);
     	}
     }
     
@@ -213,12 +215,12 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
     public static void main(String[] args){
     	System.setProperty("sun.java2d.opengl","True");
         JFrame window = new JFrame("Particle Physics");
-        GraphicsPanel pane = new GraphicsPanel(1.0f/720.0f,0.4f,0.98f,1.0f,1000.0f);
+        GraphicsPanel pane = new GraphicsPanel(1.0f/720.0f,0.4f,0.98f,0.9f,1000.0f);
         window.add(pane);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.pack();
         window.setVisible(true);
+        window.pack();
         (new Thread(pane)).start();
     }
 
@@ -239,12 +241,22 @@ public class GraphicsPanel extends JPanel implements Runnable, MouseListener, Mo
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		mouseDown = true;
+		if(e.getButton() == 1){
+			leftMouseDown = true;
+		}
+		if(e.getButton() == 3){
+			rightMouseDown = true;
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		mouseDown = false;
+		if(e.getButton() == 1){
+			leftMouseDown = false;
+		}
+		if(e.getButton() == 3){
+			rightMouseDown = false;
+		}
 	}
 
 	@Override
